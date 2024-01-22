@@ -8,7 +8,7 @@ We evaluate TEDGN on four healthcare datasets.
 
 ## The model framework of TEDGN
 
-![model](C:\Users\86136\Desktop\TEDGN\model.png)
+![model](model.png)
 
 
 
