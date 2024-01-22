@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 import json
 import torch
 import argparse
@@ -5,13 +6,14 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('--plm', type=str, default='bert')
 args, unknown = parser.parse_known_args()
-# 检查CUDA是否可用
+
+# Check if CUDA is available
 if torch.cuda.is_available():
-    # 获取GPU设备的数量
+    # Get the number of GPU devices
     device = torch.device("cuda:0")
 
 else:
-    # 如果没有GPU可用，则使用CPU
+    # If no GPU is available, use CPU
     device = torch.device("cpu")
 
 
@@ -30,16 +32,17 @@ for dataset in datasets:
 
 	if model_name == 'bert':
 		from transformers import BertTokenizer, BertModel
-		# 加载BERT模型和分词器
-		model_name = 'bert'  # 替换为你要使用的模型名称
+
+		# Load BERT model and tokenizer
+		model_name = 'bert'
 		tokenizer = BertTokenizer.from_pretrained(path)
 		model = BertModel.from_pretrained(path).to(device)
 		with torch.no_grad():
-			# 分词并编码
+			# Tokenize and encode
 			tokens = tokenizer(input_text, padding=True, truncation=False, return_tensors="pt").to(device)
 			outputs = model(**tokens)
 
-			# 获取句子编码
+			# Get sentence encoding
 			sentence_embedding = outputs.last_hidden_state.cpu()[:, 0, :]
 
 	elif model_name == 'bart':
@@ -47,11 +50,11 @@ for dataset in datasets:
 		tokenizer = BartTokenizer.from_pretrained(path)
 		model = BartModel.from_pretrained(path).to(device)
 		with torch.no_grad():
-			# 分词并编码
+			# Tokenize and encode
 			tokens = tokenizer(input_text, padding=True, truncation=False, return_tensors="pt").to(device)
 			outputs = model(**tokens)
 
-			# 获取句子编码
+			# Take the last hidden state (average pooling)
 			sentence_embedding = outputs.last_hidden_state.mean(dim=1).cpu()
 
 	elif model_name == 'led':
@@ -86,8 +89,6 @@ for dataset in datasets:
 		from transformers import AutoTokenizer, PegasusModel
 		tokenizer = AutoTokenizer.from_pretrained(path)
 		model = PegasusModel.from_pretrained(path).to(device)
-		# 输入文本
-		# input_text = "This is an example sentence."
 		prompt = [key + '\'s medical properties is: ' for key in data.keys()]
 		input_text = [value for value in data.values()]
 		with torch.no_grad():
@@ -109,15 +110,14 @@ for dataset in datasets:
 			input_text = [value for value in data.values()]
 			sentence_embedding = []
 			for i in range(len(input_text)):
-				input_ids = tokenizer(input_text[i], padding=True, truncation=True, return_tensors="pt").to(
-					device).input_ids
+				input_ids = tokenizer(input_text[i], padding=True, truncation=True, return_tensors="pt").to(device).input_ids
 				decoder_input_ids = tokenizer(prompt[i], return_tensors="pt").to(device).input_ids
 				outputs = model(input_ids=input_ids, decoder_input_ids=decoder_input_ids)
 				sentence_embedding.append(outputs.last_hidden_state.mean(dim=1).cpu())
 			sentence_embedding = torch.stack(sentence_embedding, dim=0)[:, 0, :]
 
-	# 指定保存的文件路径
+	# Specify the file path to save
 	output_file_path = './' + dataset + '/' + dataset + '_' + model_name + "_var_rep.pt"
 
-	# 使用PyTorch的torch.save()函数保存张量
+	# Save the tensor using PyTorch's torch.save() function
 	torch.save(sentence_embedding, output_file_path)

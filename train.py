@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 import os
 import argparse
 import warnings
@@ -33,12 +34,12 @@ torch.backends.cudnn.benchmark = False
 torch.backends.cudnn.deterministic = True
 torch.use_deterministic_algorithms(True)
 
-# 创建模型保存路径
+# Create model save path
 model_path = './models/'
 if not os.path.exists(model_path):
     os.mkdir(model_path)
 
-# 载入命令行超参数
+# Load command line hyperparameters
 dataset = args.dataset
 batch_size = args.batch_size
 learning_rate = args.lr
@@ -50,7 +51,7 @@ node_emb_dim = args.node_emb_dim
 plm_rep_dim = args.plm_rep_dim
 print('Dataset used: ', dataset)
 
-# 设置数据集参数
+# Set dataset parameters
 if dataset == 'P12':
     base_path = 'data/P12'
     start = 0
@@ -83,19 +84,19 @@ elif dataset == 'mimic3':
     n_class = 2
     split_idx = 0
 
-# 评价指标
+# Evaluation metrics
 acc_arr = []
 auprc_arr = []
 auroc_arr = []
 
-# 开始五次实验
+# Run five experiments
 for k in range(5):
-    # 设置不同得出随机种子
+    # Set different random seed
     torch.manual_seed(k)
     torch.cuda.manual_seed(k)
     np.random.seed(k)
 
-    # 加载经过PLM得到的变量的语义表示
+    # Load semantic representations of variables obtained through PLM
     if dataset == 'P12':
         split_path = '/splits/phy12_split' + str(split_idx) + '.npy'
         P_var_plm_rep_tensor = torch.load(base_path + '/P12_' + args.plm + '_var_rep.pt').to(device)
@@ -109,11 +110,11 @@ for k in range(5):
         split_path = ''
         P_var_plm_rep_tensor = torch.load(base_path + '/mimic3_' + args.plm + '_var_rep.pt').to(device)
 
-    # 准备数据 划分数据集
+    # Prepare data and split the dataset
     Ptrain, Pval, Ptest, ytrain, yval, ytest = get_data_split(base_path, split_path, dataset=dataset)
     print(len(Ptrain), len(Pval), len(Ptest), len(ytrain), len(yval), len(ytest))
 
-    # 数据归一化并提取模型所需输入
+    # Normalize data and extract required model inputs
     if dataset == 'P12' or dataset == 'P19' or dataset == 'physionet':
         T, F = Ptrain[0]['arr'].shape
         D = len(Ptrain[0]['extended_static'])
@@ -124,7 +125,7 @@ for k in range(5):
             Ptrain_tensor[i] = Ptrain[i]['arr']
             Ptrain_static_tensor[i] = Ptrain[i]['extended_static']
 
-        # 计算各变量在训练集的均值方差
+        # Calculate mean and standard deviation of variables in the training set
         mf, stdf = getStats(Ptrain_tensor)
         ms, ss = getStats_static(Ptrain_static_tensor, dataset=dataset)
 
@@ -144,7 +145,7 @@ for k in range(5):
         for i in range(len(Ptrain)):
             Ptrain_tensor[i][:Ptrain[i][4]] = Ptrain[i][2]
 
-        # 计算各变量在训练集的均值方差
+        # Calculate mean and standard deviation of variables in the training set
         mf, stdf = getStats(Ptrain_tensor)
 
         Ptrain_tensor, Ptrain_static_tensor, Ptrain_avg_interval_tensor, \
@@ -157,7 +158,7 @@ for k in range(5):
             Ptest_length_tensor, Ptest_time_tensor, ytest_tensor \
             = tensorize_normalize_exact_feature_mimic3(Ptest, ytest, mf, stdf)
 
-    # 载入模型
+    # Load the model
     model = TEDGN(DEVICE=device,
                   hidden_dim=hidden_dim,
                   num_of_vertices=variables_num,
@@ -174,11 +175,11 @@ for k in range(5):
     print('model', model)
     print('parameters:', count_parameters(model))
 
-    # 交叉熵损失 Adam优化器
+    # Cross-entropy loss, Adam optimizer
     criterion = torch.nn.CrossEntropyLoss().cuda()
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
-    # 对每个batch中少数类进行上采样
+    # Upsample minority class
     idx_0 = np.where(ytrain == 0)[0]
     idx_1 = np.where(ytrain == 1)[0]
     n0, n1 = len(idx_0), len(idx_1)
@@ -197,18 +198,17 @@ for k in range(5):
 
     start = time.time()
 
-
     for epoch in range(num_epochs):
         """Training"""
         model.train()
 
-        # 打乱数据
+        # Shuffle data
         np.random.shuffle(expanded_idx_1)
         I1 = expanded_idx_1
         np.random.shuffle(idx_0)
         I0 = idx_0
         for n in range(n_batches):
-            # 获取当前batch数据
+            # Get current batch data
             idx0_batch = I0[n * int(batch_size / 2):(n + 1) * int(batch_size / 2)]
             idx1_batch = I1[n * int(batch_size / 2):(n + 1) * int(batch_size / 2)]
             idx = np.concatenate([idx0_batch, idx1_batch], axis=0)
@@ -217,20 +217,19 @@ for k in range(5):
                     Ptrain_avg_interval_tensor[idx].cuda(), Ptrain_length_tensor[idx].cuda(), \
                     Ptrain_time_tensor[idx].cuda(), ytrain_tensor[idx].cuda()
 
-            # 反向传播
+            # Backward pass
             outputs = model.forward(P, P_static, P_avg_interval, P_length, P_time, P_var_plm_rep_tensor)
             optimizer.zero_grad()
             loss = criterion(outputs, y)
             loss.backward()
             optimizer.step()
 
-        # 计算训练集评价指标
+        # Calculate training set evaluation metrics
         train_probs = torch.squeeze(torch.sigmoid(outputs))
         train_probs = train_probs.cpu().detach().numpy()
         train_y = y.cpu().detach().numpy()
         train_auroc = roc_auc_score(train_y, train_probs[:, 1])
         train_auprc = average_precision_score(train_y, train_probs[:, 1])
-
 
         """Validation"""
         model.eval()
@@ -250,7 +249,7 @@ for k in range(5):
                 (epoch, loss.item(), train_auprc * 100, train_auroc * 100,
                  val_loss.item(), acc_val * 100, aupr_val * 100, auc_val * 100))
 
-            # 保存训练集上取得最优AUPRC的模型权重
+            # Save the model weights with the best AUPRC on the validation set
             if aupr_val > best_aupr_val:
                 best_auc_val = auc_val
                 best_aupr_val = aupr_val
@@ -258,6 +257,7 @@ for k in range(5):
                 save_time = str(int(time.time()))
                 torch.save(model.state_dict(),
                            model_path + '_' + dataset + '_' + save_time + '_' + str(k) + '.pt')
+
     end = time.time()
     time_elapsed = end - start
     print('Total Time elapsed: %.3f mins' % (time_elapsed / 60.0))
@@ -287,7 +287,7 @@ for k in range(5):
     auroc_arr.append(auc * 100)
 
 print('args.dataset', args.dataset)
-# 展示五次运行的均值和标准差
+# Display the mean and standard deviation of five runs
 mean_acc, std_acc = np.mean(acc_arr), np.std(acc_arr)
 mean_auprc, std_auprc = np.mean(auprc_arr), np.std(auprc_arr)
 mean_auroc, std_auroc = np.mean(auroc_arr), np.std(auroc_arr)

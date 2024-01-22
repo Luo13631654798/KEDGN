@@ -18,8 +18,8 @@ We evaluate TEDGN on four healthcare datasets.
 
 ## Datasets
 
-We prepared to run our code for Raindrop as well as the baseline methods with two healthcare and 
-one human activity dataset.
+We prepared to run our code for TEDGN as well as the baseline methods with four healthcare
+datasets.
 
 ### Raw data
 
@@ -41,7 +41,7 @@ The raw data can be found at:
 
 **(2)** P12: https://physionet.org/content/challenge-2012/1.0.0/
 
-The processed datasets can be obtained at:
+The datasets processed by [Raindrop](https://github.com/mims-harvard/Raindrop) can be obtained at:
 
 **(1)** P19 (PhysioNet Sepsis Early Prediction Challenge 2019) https://doi.org/10.6084/m9.figshare.19514338.v1
 
@@ -63,7 +63,7 @@ For the PhysioNet dataset:
 
 ## Requirements
 
-Raindrop has tested using Python 3.9.
+TEDGN has tested using Python 3.9.
 
 To have consistent libraries and their versions, you can install needed dependencies 
 for this project running the following command:
@@ -105,16 +105,14 @@ python train.py --dataset mimic3 --batch_size 256 --lr 0.005 --plm bert --plm_re
 Algorithms can be run with named arguments, which allow the use of different settings from the paper:
 
 - *dataset*: Choose which dataset to use. Options: [P12, P19, physionet, mimic3].
-- *batch-size*: 训练批次大小
-- *lr*: 训练学习率
-- *plm*: 选择提取变量语义表示时使用的预训练模型. Options: [bert, bart, led, gpt2, pegasus, t5].
-- *plm_rep_dim*: 预训练模型输出表示的维度，对应文中的 *d* , 除了pegasus为1024外，其他均为768
-- *query_vector_dim*: 查询向量的维度，对应文中的 *q*
-- *node_emb_dim*: 变量节点嵌入的维度，对应文中的 *n*
-- *rarity_alpha*: 密度分数的proportion，对应文中的 *α*
-- *hidden_dim*: 节点状态/观测编码的维度，对应文中的 *h / k*
-
-
+- *batch-size*: Training batch size.
+- *lr*: Training learning rate.
+- *plm*: Choose the pre-trained model used for extracting variable semantic representations. Options: [bert, bart, led, gpt2, pegasus, t5].
+- *plm_rep_dim*: Dimension of the output representation of the pre-trained model, corresponding to *d* in the paper. Except for Pegasus, which is 1024, others are all 768.
+- *query_vector_dim*: Dimension of the query vector, corresponding to *q* in the paper.
+- *node_emb_dim*: Dimension of the variable node embedding, corresponding to *n* in the paper.
+- *rarity_alpha*: Proportion of the density score, corresponding to *α* in the paper.
+- *hidden_dim*: Dimension of the node state/observation encoding, corresponding to *h / k* in the paper.
 
 ### Variable Semantic Representations Extraction
 
