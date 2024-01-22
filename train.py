@@ -161,8 +161,8 @@ for k in range(5):
     # Load the model
     model = TEDGN(DEVICE=device,
                   hidden_dim=hidden_dim,
-                  num_of_vertices=variables_num,
-                  num_of_tp=timestamp_num,
+                  num_of_variables=variables_num,
+                  num_of_timestamps=timestamp_num,
                   d_static=d_static,
                   n_class=2,
                   rarity_alpha=rarity_alpha,

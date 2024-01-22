@@ -57,9 +57,9 @@ class MLP_Param(nn.Module):
         nn.init.xavier_uniform_(self.W_1)
         nn.init.xavier_uniform_(self.b_1)
 
-    def forward(self, x, var_vector):
-        W_1 = torch.einsum("nd, dio->nio", var_vector, self.W_1)
-        b_1 = torch.einsum("nd, do->no", var_vector, self.b_1)
+    def forward(self, x, query_vectors):
+        W_1 = torch.einsum("nd, dio->nio", query_vectors, self.W_1)
+        b_1 = torch.einsum("nd, do->no", query_vectors, self.b_1)
         x = torch.squeeze(torch.bmm(x.unsqueeze(1), W_1)) + b_1
         return x
 
@@ -73,11 +73,11 @@ class AGCRNCellWithMLP(nn.Module):
     def forward(self, x, h, query_vectors, adj, nodes_ind):
         combined = torch.cat([x, h], dim=-1)
         combined = torch.matmul(adj, combined)
-        r = torch.sigmoid(self.reset_gate(combined[nodes_ind], query_vectors, nodes_ind))
-        u = torch.sigmoid(self.update_gate(combined[nodes_ind], query_vectors, nodes_ind))
+        r = torch.sigmoid(self.reset_gate(combined[nodes_ind], query_vectors))
+        u = torch.sigmoid(self.update_gate(combined[nodes_ind], query_vectors))
         h[nodes_ind] = r * h[nodes_ind]
         combined_new = torch.cat([x, h], dim=-1)
-        candidate_h = torch.tanh(self.candidate_gate(combined_new[nodes_ind], query_vectors, nodes_ind))
+        candidate_h = torch.tanh(self.candidate_gate(combined_new[nodes_ind], query_vectors))
         return (1 - u) * h[nodes_ind] + u * candidate_h
 
 class VSDGCRNN(nn.Module):
