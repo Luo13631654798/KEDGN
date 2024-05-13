@@ -19,11 +19,13 @@ else:
 
 # datasets = ['physionet']
 # datasets = ['P19']
-datasets = ['physionet', 'P12', 'P19', 'mimic3']
+datasets = ['mimic3']
+# datasets = ['physionet', 'P12', 'P19', 'mimic3']
+
 model_name = args.plm
 
 for dataset in datasets:
-	json_file_path = './' + dataset + '/' + dataset + '_variables.json'
+	json_file_path = './' + dataset + '/' + dataset + '_variables_wiki.json'
 	with open(json_file_path, 'r') as json_file:
 		data = json.load(json_file)
 	path = './plm/' + model_name
@@ -117,7 +119,7 @@ for dataset in datasets:
 			sentence_embedding = torch.stack(sentence_embedding, dim=0)[:, 0, :]
 
 	# Specify the file path to save
-	output_file_path = './' + dataset + '/' + dataset + '_' + model_name + "_var_rep.pt"
+	output_file_path = './' + dataset + '/' + dataset + '_' + model_name + "_var_wiki.pt"
 
 	# Save the tensor using PyTorch's torch.save() function
 	torch.save(sentence_embedding, output_file_path)
