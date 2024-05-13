@@ -81,25 +81,25 @@ After obtaining the dataset and corresponding variable representations, starting
 - Physionet
 
 ```
-python train.py --dataset physionet --batch_size 256 --lr 0.001 --plm bert --plm_rep_dim 768 --query_vector_dim 5 --node_emb_dim 9 --rarity_alpha 1  --hidden_dim 8  
+python train.py --dataset physionet --batch_size 256 --lr 0.001 --plm bert --plm_rep_dim 768 --query_vector_dim 5 --node_emb_dim 9 --rarity_alpha 1  --hidden_dim 8 -- source gpt 
 ```
 
 - P19
 
 ```
-python train.py --dataset P19 --batch_size 512 --lr 0.005 --plm bert --plm_rep_dim 768 --query_vector_dim 5 --node_emb_dim 16 --rarity_alpha 1 --hidden_dim 16 
+python train.py --dataset P19 --batch_size 512 --lr 0.005 --plm bert --plm_rep_dim 768 --query_vector_dim 5 --node_emb_dim 16 --rarity_alpha 1 --hidden_dim 16 -- source gpt  
 ```
 
 - P12
 
 ```
-python train.py --dataset P12 --batch_size 512 --lr 0.001 --plm bert --plm_rep_dim 768 --query_vector_dim 5 --node_emb_dim 7 --rarity_alpha 3 --hidden_dim 12 
+python train.py --dataset P12 --batch_size 512 --lr 0.001 --plm bert --plm_rep_dim 768 --query_vector_dim 5 --node_emb_dim 7 --rarity_alpha 3 --hidden_dim 12 -- source gpt  
 ```
 
 - MIMIC-III
 
 ```
-python train.py --dataset mimic3 --batch_size 256 --lr 0.005 --plm bert --plm_rep_dim 768 --query_vector_dim 7 --node_emb_dim 7 --rarity_alpha 2  --hidden_dim 12  
+python train.py --dataset mimic3 --batch_size 256 --lr 0.005 --plm bert --plm_rep_dim 768 --query_vector_dim 7 --node_emb_dim 7 --rarity_alpha 2  --hidden_dim 12 -- source gpt 
 ```
 
 Algorithms can be run with named arguments, which allow the use of different settings from the paper:
@@ -113,6 +113,7 @@ Algorithms can be run with named arguments, which allow the use of different set
 - *node_emb_dim*: Dimension of the variable node embedding, corresponding to *n* in the paper.
 - *rarity_alpha*: Proportion of the density score, corresponding to *α* in the paper.
 - *hidden_dim*: Dimension of the node state/observation encoding, corresponding to *h / k* in the paper.
+- *source*: Choose the textual source. Options: [gpt, name, wiki].
 
 ### Variable Semantic Representations Extraction
 
