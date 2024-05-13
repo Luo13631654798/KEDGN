@@ -1,0 +1,18 @@
+{
+    "Weight": "Body Weight",
+    "HR": "Heart Rate",
+    "MAP": "Mean Arterial Pressure",
+    "DBP": "Diastolic Blood Pressure",
+    "SBP": "Systolic Blood Pressure",
+    "SpO2": "Oxygen Saturation",
+    "RR": "Respiratory Rate",
+    "CRR": "Capillary Refill Rate",
+    "Glucose": "Serum Glucose",
+    "pH": "Blood pH",
+    "Temperature": "Body Temperature",
+    "FiO2": "Fraction of Inspired Oxygen",
+    "GCS-EO": "Eye Opening Score of Glasgow Coma Scale",
+    "GCS-MR": "Motor Response Score of Glasgow Coma Scale",
+    "GCS-T": "Total Glasgow Coma Scale Score",
+    "GCS-VR": "Verbal Response Score of Glasgow Coma Scale"
+}

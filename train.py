@@ -19,6 +19,7 @@ parser.add_argument('--query_vector_dim', type=int, default=5)
 parser.add_argument('--node_emb_dim', type=int, default=8)
 parser.add_argument('--plm', type=str, default='bert')
 parser.add_argument('--plm_rep_dim', type=int, default=768)
+parser.add_argument('--source', type=str, default='gpt')
 
 args, unknown = parser.parse_known_args()
 print(args)
@@ -49,6 +50,8 @@ rarity_alpha = args.rarity_alpha
 query_vector_dim = args.query_vector_dim
 node_emb_dim = args.node_emb_dim
 plm_rep_dim = args.plm_rep_dim
+source = args.source
+
 print('Dataset used: ', dataset)
 
 # Set dataset parameters
@@ -89,6 +92,13 @@ acc_arr = []
 auprc_arr = []
 auroc_arr = []
 
+if source == 'gpt':
+    suffix = '_var_rep_gpt_source.pt'
+elif source == 'name':
+    suffix = '_var_rep_name_source.pt'
+elif source == 'wiki':
+    suffix = '_var_rep_wiki_source.pt'
+
 # Run five experiments
 for k in range(5):
     # Set different random seed
@@ -99,16 +109,16 @@ for k in range(5):
     # Load semantic representations of variables obtained through PLM
     if dataset == 'P12':
         split_path = '/splits/phy12_split' + str(split_idx) + '.npy'
-        P_var_plm_rep_tensor = torch.load(base_path + '/P12_' + args.plm + '_var_rep.pt').to(device)
+        P_var_plm_rep_tensor = torch.load(base_path + '/P12_' + args.plm + suffix).to(device)
     elif dataset == 'physionet':
         split_path = '/splits/phy12_split' + str(split_idx) + '.npy'
-        P_var_plm_rep_tensor = torch.load(base_path + '/physionet_' + args.plm + '_var_rep.pt').to(device)
+        P_var_plm_rep_tensor = torch.load(base_path + '/physionet_' + args.plm + suffix).to(device)
     elif dataset == 'P19':
         split_path = '/splits/phy19_split' + str(split_idx) + '_new.npy'
-        P_var_plm_rep_tensor = torch.load(base_path + '/P19_' + args.plm + '_var_rep.pt').to(device)
+        P_var_plm_rep_tensor = torch.load(base_path + '/P19_' + args.plm + suffix).to(device)
     elif dataset == 'mimic3':
         split_path = ''
-        P_var_plm_rep_tensor = torch.load(base_path + '/mimic3_' + args.plm + '_var_rep.pt').to(device)
+        P_var_plm_rep_tensor = torch.load(base_path + '/mimic3_' + args.plm + suffix).to(device)
 
     # Prepare data and split the dataset
     Ptrain, Pval, Ptest, ytrain, yval, ytest = get_data_split(base_path, split_path, dataset=dataset)
