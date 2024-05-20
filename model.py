@@ -144,11 +144,11 @@ class VSDGCRNN(nn.Module):
 
         return output
 
-class TEDGN(nn.Module):
+class KEDGN(nn.Module):
     def __init__(self, DEVICE, hidden_dim, num_of_variables, num_of_timestamps, d_static,
                  n_class, node_enc_layer=2, rarity_alpha=0.5, query_vector_dim=5, node_emb_dim=8, plm_rep_dim=768):
 
-        super(TEDGN, self).__init__()
+        super(KEDGN, self).__init__()
         self.num_of_variables = num_of_variables
         self.num_of_timestamps = num_of_timestamps
         self.hidden_dim = hidden_dim

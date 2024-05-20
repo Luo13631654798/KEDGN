@@ -1,12 +1,12 @@
-# Text-Empowered Dynamic Graph Network for Irregularly Sampled Medical Time Series
+# Knowledge-Empowered Dynamic Graph Network for Irregularly Sampled Medical Time Series
 
 ## Overview
 
-This repository contains implementation code for *Text-Empowered Dynamic Graph Network for Irregularly Sampled Medical Time Series*.
-We propose Text-Empowered Dynamic Graph Network (TEDGN), a graph neural network empowered by variables’ textual medical information, aiming to model variable-specific temporal dependencies and inter-variable dependencies in ISMTS. 
-We evaluate TEDGN on four healthcare datasets.
+This repository contains implementation code for *Knowledge-Empowered Dynamic Graph Network for Irregularly Sampled Medical Time Series*.
+We propose Knowledge-Empowered Dynamic Graph Network (KEDGN), a graph neural network empowered by variables’ textual medical information, aiming to model variable-specific temporal dependencies and inter-variable dependencies in ISMTS. 
+We evaluate KEDGN on four healthcare datasets.
 
-## The model framework of TEDGN
+## The model framework of KEDGN
 
 ![model](model.png)
 
@@ -18,7 +18,7 @@ We evaluate TEDGN on four healthcare datasets.
 
 ## Datasets
 
-We prepared to run our code for TEDGN as well as the baseline methods with four healthcare
+We prepared to run our code for KEDGN as well as the baseline methods with four healthcare
 datasets.
 
 ### Raw data
@@ -63,7 +63,7 @@ For the PhysioNet dataset:
 
 ## Requirements
 
-TEDGN has tested using Python 3.9.
+KEDGN has tested using Python 3.9.
 
 To have consistent libraries and their versions, you can install needed dependencies 
 for this project running the following command:
@@ -76,7 +76,7 @@ pip install -r requirements.txt
 
 ## Running the code
 
-After obtaining the dataset and corresponding variable representations, starting from root directory *TEDGN*, you can run models on four datasets as follows:
+After obtaining the dataset and corresponding variable representations, starting from root directory *KEDGN*, you can run models on four datasets as follows:
 
 - Physionet
 

@@ -169,7 +169,7 @@ for k in range(5):
             = tensorize_normalize_exact_feature_mimic3(Ptest, ytest, mf, stdf)
 
     # Load the model
-    model = TEDGN(DEVICE=device,
+    model = KEDGN(DEVICE=device,
                   hidden_dim=hidden_dim,
                   num_of_variables=variables_num,
                   num_of_timestamps=timestamp_num,
