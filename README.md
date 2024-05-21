@@ -123,8 +123,10 @@ Algorithms can be run with named arguments, which allow the use of different set
 
 - Run the following command:
 
+- cd ./data
+
   ```
-   python train.py --plm [plm_name]
+   python get_var_rep.py --plm [plm_name]
   ```
 
   Available PLM options: [bert, bart, led, gpt2, pegasus, t5].
