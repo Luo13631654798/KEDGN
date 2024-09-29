@@ -3,6 +3,7 @@
 ## Overview
 
 This repository contains implementation code for our NeurIPS 2024 paper: "*Knowledge-Empowered Dynamic Graph Network for Irregularly Sampled Medical Time Series*".
+
 We propose Knowledge-Empowered Dynamic Graph Network (KEDGN), a graph neural network empowered by variables’ textual medical information, aiming to model variable-specific temporal dependencies and inter-variable dependencies in ISMTS. 
 We evaluate KEDGN on four healthcare datasets.
 
