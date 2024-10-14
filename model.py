@@ -1,4 +1,5 @@
 # -*- coding:utf-8 -*-
+import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from utils import *
@@ -48,9 +49,9 @@ class MLP(nn.Module):
     def forward(self, x):
         return self.layers(x)
 
-class MLP_Param(nn.Module):
+class Linear_Param(nn.Module):
     def __init__(self, input_size, output_size, query_vector_dim):
-        super(MLP_Param, self).__init__()
+        super(Linear_Param, self).__init__()
         self.W_1 = nn.Parameter(torch.FloatTensor(query_vector_dim, input_size, output_size))
         self.b_1 = nn.Parameter(torch.FloatTensor(query_vector_dim, output_size))
 
@@ -63,12 +64,12 @@ class MLP_Param(nn.Module):
         x = torch.squeeze(torch.bmm(x.unsqueeze(1), W_1)) + b_1
         return x
 
-class AGCRNCellWithMLP(nn.Module):
+class AGCRNCellWithLinear(nn.Module):
     def __init__(self, input_size, query_vector_dim):
-        super(AGCRNCellWithMLP, self).__init__()
-        self.update_gate = MLP_Param(2 * input_size + 1, input_size, query_vector_dim)
-        self.reset_gate = MLP_Param(2 * input_size + 1, input_size, query_vector_dim)
-        self.candidate_gate = MLP_Param(2 * input_size + 1, input_size, query_vector_dim)
+        super(AGCRNCellWithLinear, self).__init__()
+        self.update_gate = Linear_Param(2 * input_size + 1, input_size, query_vector_dim)
+        self.reset_gate = Linear_Param(2 * input_size + 1, input_size, query_vector_dim)
+        self.candidate_gate = Linear_Param(2 * input_size + 1, input_size, query_vector_dim)
 
     def forward(self, x, h, query_vectors, adj, nodes_ind):
         combined = torch.cat([x, h], dim=-1)
@@ -86,7 +87,7 @@ class VSDGCRNN(nn.Module):
         self.d_in = d_in
         self.d_model = d_model
         self.num_of_nodes = num_of_nodes
-        self.gated_update = AGCRNCellWithMLP(d_model, query_vector_dim)
+        self.gated_update = AGCRNCellWithLinear(d_model, query_vector_dim)
         self.rarity_alpha = rarity_alpha
         self.rarity_W = nn.Parameter(torch.randn(num_of_nodes, num_of_nodes))
         self.relu = nn.ReLU()
